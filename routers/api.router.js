@@ -1,7 +1,8 @@
+const { getUserById } = require('../controllers/users.controllers')
+
 const apiRouter = require('express').Router()
 
-apiRouter.get('/', )
+apiRouter.get('/users/:user_id', getUserById)
 
-apiRouter.use('/', )
 
 module.exports = apiRouter
