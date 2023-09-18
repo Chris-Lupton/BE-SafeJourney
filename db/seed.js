@@ -1,16 +1,23 @@
-const db = require('./connection.js')
+const db = require('./connection')
 
 exports.seed = async (data) => {
+  let client
   try {
-    await db.connect()
+    client = await db.connect()
 
-    await db.users.drop()
+    const database = client.db()
 
-    await db.createCollection("users")
+    await database.collection("users").drop().catch(err => {
+      if (err.message !== 'ns not found') {
+        throw err
+      }
+    })
 
-    await db.users.insertMany(data)
+    await database.createCollection("users")
+
+    await database.collection("users").insertMany(data)
 
   } finally {
-    await db.close()
+    await client.close()
   }
 }
