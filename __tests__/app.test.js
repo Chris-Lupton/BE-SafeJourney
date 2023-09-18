@@ -63,7 +63,7 @@ describe('POST /api/users/', () => {
     })
 })
 
-describe("patch api/users/:user_id/add", ()=>{
+describe("PATCH api/users/:user_id/add", ()=>{
     test("201 changes the list of friends of a user", async ()=>{
         const newFriend = {phoneNumber: '07900000001'}
         const { body: { acknowledged } } = await request(app)
@@ -82,5 +82,34 @@ describe("patch api/users/:user_id/add", ()=>{
             .send(newFriend)
             .expect(404)
         expect(msg).toBe("Invalid phone number")
+    })
+})
+describe("PATCH /api/users/:user_id/location", () => {
+    test("201 should update the status", async ()=>{
+        const update = {status: true}
+
+        const { body: { acknowledged } } = await request(app)
+            .patch('/api/users/6/location')
+            .send(update)
+            .expect(201)
+        expect(acknowledged).toBe(true)
+
+        const { body: { user : { location }} } = await request(app).get("/api/users/6")
+        expect(location).toHaveProperty("status", true)
+    })
+    test("201 should update the start location", async ()=>{
+        const update = {status: true, start: {lat:1, long:1}, end: {lat:2, long:2}}
+
+        const { body: { acknowledged } } = await request(app)
+            .patch('/api/users/6/location')
+            .send(update)
+            .expect(201)
+        expect(acknowledged).toBe(true)
+
+        const { body: { user : { location }} } = await request(app).get("/api/users/6")
+        expect(location).toHaveProperty("status", true)
+        expect(location.start).toEqual({lat:1, long:1})
+        expect(location.current).toEqual({lat:1, long:1})
+        expect(location.end).toEqual({lat:2, long:2})
     })
 })
