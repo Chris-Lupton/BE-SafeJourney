@@ -2,9 +2,10 @@
   "name": "be-safety-app",
   "version": "1.0.0",
   "description": "",
-  "main": "app.js",
+  "main": "listen.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "node listen.js"
   },
   "keywords": [],
   "author": "",
