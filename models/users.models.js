@@ -51,3 +51,20 @@ exports.updateUserFriends = async (id, new_id) =>{
     await client.close()
     return acknowledged
 }
+
+exports.updateLocation = async (status, start, end, user_id) => {
+    const client = await db.connect()
+    const database = client.db()
+
+    const filterCriteria = { user_id: +user_id }
+    const newLocation = {
+        status: status,     
+        start: start,    
+        current: start,    
+        end: end  
+        }
+    const { acknowledged } = await database.collection('users').updateOne(filterCriteria, { $set: {location: newLocation} })
+
+    await client.close()
+    return acknowledged
+}
