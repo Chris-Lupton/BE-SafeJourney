@@ -57,6 +57,6 @@ module.exports = [
                     current: {lat: 0, long: 0},    
                     end: {lat: 0, long: 0}  
                 },  
-        friendList: [1,2,3,4,5]
+        friendList: [2,3,4]
     }
 ]
