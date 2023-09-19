@@ -1,0 +1,46 @@
+{
+    "GET /api/users/:user_id": {
+      "description": "returns a user object matching the given id",
+      "exampleResponse": {
+        "user":  {  "user_id": 1,  
+                    "name": "Gemma", 
+                    "phoneNumber": "07900000001",  
+                    "location": { "status": false,     
+                        "start": {"lat": 0, "long": 0},    
+                        "current": {"lat": 0, "long": 0},    
+                        "end": {"lat": 0, "long": 0}  
+                    },  
+                    "friendList": [2,3,4,5,6]
+                }
+        }
+    },
+    "POST /api/users": {
+        "description": "adds a new user to the database",
+        "exampleRequest": {"name": "Johny English", "phoneNumber": "07900000007"},
+        "exampleResponse": {   }
+    },
+    "PATCH api/users/:user_id/friends": {
+        "description": "adds a friend to your friendList if the phone number exists",
+        "exampleRequest": {"phoneNumber": "07900000001"},
+        "exampleResponse": {   }
+    },
+    "PATCH /api/users/:user_id/location": {
+        "description": "updates your location",
+        "exampleRequest": {"status": true, "start": {"lat":1, "long":1}, "end": {"lat":2, "long":2}},
+        "exampleResponse": {   }
+    },
+    "GET /api/users/:user_id/friends": {
+        "description": "returns an array of your friends data",
+        "exampleResponse": { "friendList": [
+            {   "user_id": 1,  
+                "name": "Gemma", 
+                "phoneNumber": "07900000001",  
+                "location": { "status": false,     
+                    "start": {"lat": 0, "long": 0},    
+                    "current": {"lat": 0, "long": 0},    
+                    "end": {"lat": 0, "long": 0}  
+                }
+            }
+        ]}
+    }
+}
