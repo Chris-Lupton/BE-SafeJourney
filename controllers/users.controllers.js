@@ -1,4 +1,4 @@
-const { selectUserById, insertUser, updateUserFriends, getUserByPhoneNumber, updateLocation, fetchFriendList} = require("../models/users.models");
+const { selectUserById, insertUser, updateUserFriends, getUserByPhoneNumber, updateLocation, fetchFriendList, updateCurrentLocation} = require("../models/users.models");
 
 exports.getUserById = async (request, response, next) => {
     try {
@@ -36,10 +36,15 @@ exports.patchUserFriends = async(request, response, next) =>{
 exports.patchLocation = async(request, response, next) => {
     try {
         const { user_id } = request.params
-        const { status, start, end } = request.body
-
-        const acknowledged = await updateLocation(status, start, end, user_id)
-        response.status(201).send({ acknowledged })
+        const { status, start, end, current } = request.body
+        if(current) {
+            const acknowledged = await updateCurrentLocation(user_id, current)
+            response.status(201).send({ acknowledged })
+        
+        } else {
+            const acknowledged = await updateLocation(status, start, end, user_id, current)
+            response.status(201).send({ acknowledged })
+        } 
     } catch (err) {
         next(err)
     }
@@ -54,3 +59,4 @@ exports.getFriendList = async (request, response, next) => {
         next(err)
     }
 }
+

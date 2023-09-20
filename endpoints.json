@@ -26,8 +26,11 @@
     },
     "PATCH /api/users/:user_id/location": {
         "description": "updates your location",
-        "exampleRequest": {"status": true, "start": {"lat":1, "long":1}, "end": {"lat":2, "long":2}},
-        "exampleResponse": {   }
+        "startRequest": {"status": true, "start": {"lat":1, "long":1}, "end": {"lat":2, "long":2}},
+        "updateRequest": {"current":{"lat":1, "long":1}},
+        "exampleResponse": { "acknowledged": true  },
+        "endRequest": {"status": false}
+    
     },
     "GET /api/users/:user_id/friends": {
         "description": "returns an array of your friends data",
