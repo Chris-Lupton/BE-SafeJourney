@@ -30,27 +30,38 @@ describe('GET /api/users/:user_id', () => {
     })
 })
 
-//THIS NEEDS TO ADD UNIQUE USER_IDS??, EMPTY LOCATION AND EMPTY FRIENDS LIST AND SORT OUT THE RESPONSE
-
-describe.only('POST /api/users/', () => {
+describe('POST /api/users/', () => {
     const newUser = {name: "Johny English", phoneNumber: '07900000007'}
     const incompleteUser = {phoneNumber: '07900000007'}
 
     test('201: Should return a user object with the given id', async () => {
-        const  response = await request(app)
-            .post("/api/users").send(newUser)
+        const { body: { user } } = await request(app)
+            .post("/api/users")
+            .send(newUser)
             .expect(201)
-        expect(response.text.includes("acknowledged\":true,")).toBe(true)
+        expect(user).toHaveProperty('user_id', 7)
+        expect(user).toHaveProperty('name', "Johny English")
+        expect(user.location).toEqual({
+            status: false,
+            start: {lat: null, long: null},
+            current: {lat: null, long: null},
+            end: {lat: null, long: null}
+        })
+        expect(user.friendList).toEqual([])
     })
     test("400: should generate a 400 error with an incomplete user", async ()=>{
-        const  response = await request(app)
-            .post("/api/users").send(incompleteUser)
+        const { body: { msg }} = await request(app)
+            .post("/api/users")
+            .send(incompleteUser)
             .expect(400)
+        expect(msg).toBe('Invalid input')
     })
     test("404: should generate a 404 error with a wrong path", async ()=>{
-        const  response = await request(app)
-            .post("/api/userss").send(newUser)
+        const { body: { msg }} = await request(app)
+            .post("/api/userss")
+            .send(newUser)
             .expect(404)
+        expect(msg).toBe('Not found')
     })
 })
 
@@ -116,27 +127,27 @@ describe("GET /api/users/:user_id/friends", () => {
             name: 'Chris W',  
             phoneNumber: '07900000002',  
             location: { status: false,     
-                        start: {lat: 0, long: 0},    
-                        current: {lat: 0, long: 0},    
-                        end: {lat: 0, long: 0}  
+                        start: {lat: null, long: null},    
+                        current: {lat: null, long: null},    
+                        end: {lat: null, long: null}  
                     },  
         },
         {   user_id: 3,  
             name: 'Chris L',  
             phoneNumber: '07900000003',  
             location: { status: false,     
-                        start: {lat: 0, long: 0},    
-                        current: {lat: 0, long: 0},    
-                        end: {lat: 0, long: 0}  
+                        start: {lat: null, long: null},    
+                        current: {lat: null, long: null},    
+                        end: {lat: null, long: null}  
                     },  
         },
         {   user_id: 4,  
             name: 'Aminah',  
             phoneNumber: '07900000004',  
             location: { status: false,     
-                        start: {lat: 0, long: 0},    
-                        current: {lat: 0, long: 0},    
-                        end: {lat: 0, long: 0}  
+                        start: {lat: null, long: null},    
+                        current: {lat: null, long: null},    
+                        end: {lat: null, long: null}  
                     },  
         }])
     })
@@ -151,7 +162,7 @@ describe('Patch /api/user_id/location', () => {
         const {body:{user:{location}}} = await request(app).get('/api/users/1')
         expect(location.current).toEqual({lat: 1, long:1})
     })
-    test.only('201: should update the status to false and delete current data', async() => {
+    test('201: should update the status to false and delete current data', async() => {
         const update = {status: false}
         const {body:{acknowledged}} = await request(app).patch('/api/users/1/location')
         .send(update).expect(201)

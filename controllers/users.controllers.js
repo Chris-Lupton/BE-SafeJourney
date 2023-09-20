@@ -13,8 +13,8 @@ exports.getUserById = async (request, response, next) => {
 exports.postUser = async(request, response, next) => {
     try {
         const newUser = request.body
-        const acknowledged = await insertUser(newUser)
-        response.status(201).send({ acknowledged })
+        const user = await insertUser(newUser)
+        response.status(201).send({ user })
     } catch (err) {
         next(err)
     }

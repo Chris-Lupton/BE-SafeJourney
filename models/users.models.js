@@ -17,16 +17,29 @@ exports.insertUser = async (user) =>  {
     if(!user.name || !user.phoneNumber){
         return Promise.reject({status:400, msg:"Invalid input"})
     }
-    user.location = {status: false}
+    user.location = {
+        status: false,
+        start: {lat: null, long: null},
+        current: {lat: null, long: null},
+        end: {lat: null, long: null}
+    }
     user.friendList = []
 
     const client = await db.connect()
     const database = client.db()
-    const { insertedId } = await database.collection('users').insertOne(user)
 
-    console.log(insertedId);
-    client.close()
-    return
+    const count = await database.collection('users').countDocuments()
+    
+    user.user_id = count+1
+
+    const { acknowledged } = await database.collection('users').insertOne(user)
+
+    if(acknowledged){
+        const newUser = await this.selectUserById(user.user_id)
+        return newUser
+    } else {
+        return Promise.reject({})
+    }
 }
 
 exports.getUserByPhoneNumber = async (phoneNumber) => {
