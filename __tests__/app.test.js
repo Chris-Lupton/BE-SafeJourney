@@ -141,3 +141,25 @@ describe("GET /api/users/:user_id/friends", () => {
         }])
     })
 })
+
+describe('Patch /api/user_id/location', () => {
+    test('201: should update the current location', async() => {
+        const updateLocation = {current: {lat: 1, long:1}}
+        const {body:{acknowledged}} = await request(app).patch('/api/users/1/location')
+        .send(updateLocation).expect(201)
+        expect(acknowledged).toBe(true)
+        const {body:{user:{location}}} = await request(app).get('/api/users/1')
+        expect(location.current).toEqual({lat: 1, long:1})
+    })
+    test.only('201: should update the status to false and delete current data', async() => {
+        const update = {status: false}
+        const {body:{acknowledged}} = await request(app).patch('/api/users/1/location')
+        .send(update).expect(201)
+        expect(acknowledged).toBe(true)
+        const {body:{user:{location}}} = await request(app).get('/api/users/1')
+        expect(location.status).toBe(false)
+        expect(location.start).toEqual({lat: null, long: null})
+        expect(location.current).toEqual({lat: null, long: null})
+        expect(location.end).toEqual({lat: null, long: null})
+    })
+})
