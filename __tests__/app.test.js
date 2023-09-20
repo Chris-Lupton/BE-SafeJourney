@@ -30,44 +30,35 @@ describe('GET /api/users/:user_id', () => {
     })
 })
 
-describe('POST /api/users/', () => {
-    const newUser = {user_id:7, name: "Johny English", phoneNumber: '07900000007',  
-        location: { status: false,     
-                    start: {lat: 0, long: 0},    
-                    current: {lat: 0, long: 0},    
-                    end: {lat: 0, long: 0}  
-                },  
-        friendList: [2,3,4,5,6]}
-        const incompleteUser = {user_id:7, phoneNumber: '07900000007',  
-        location: { status: false,     
-                    start: {lat: 0, long: 0},    
-                    current: {lat: 0, long: 0},    
-                    end: {lat: 0, long: 0}  
-                },  
-        friendList: [2,3,4,5,6]}
+//THIS NEEDS TO ADD UNIQUE USER_IDS??, EMPTY LOCATION AND EMPTY FRIENDS LIST AND SORT OUT THE RESPONSE
+
+describe.only('POST /api/users/', () => {
+    const newUser = {name: "Johny English", phoneNumber: '07900000007'}
+    const incompleteUser = {phoneNumber: '07900000007'}
+
     test('201: Should return a user object with the given id', async () => {
         const  response = await request(app)
             .post("/api/users").send(newUser)
             .expect(201)
         expect(response.text.includes("acknowledged\":true,")).toBe(true)
     })
-    test("should generate a 400 error with an incomplete user", async ()=>{
+    test("400: should generate a 400 error with an incomplete user", async ()=>{
         const  response = await request(app)
             .post("/api/users").send(incompleteUser)
             .expect(400)
     })
-    test("should generate a 404 error with a wrong path", async ()=>{
+    test("404: should generate a 404 error with a wrong path", async ()=>{
         const  response = await request(app)
             .post("/api/userss").send(newUser)
             .expect(404)
     })
 })
 
-describe("PATCH api/users/:user_id/add", ()=>{
+describe("PATCH api/users/:user_id/friends", ()=>{
     test("201 changes the list of friends of a user", async ()=>{
         const newFriend = {phoneNumber: '07900000001'}
         const { body: { acknowledged } } = await request(app)
-            .patch('/api/users/6/add')
+            .patch('/api/users/6/friends')
             .send(newFriend)
             .expect(201)
         expect(acknowledged).toBe(true)
@@ -78,12 +69,13 @@ describe("PATCH api/users/:user_id/add", ()=>{
     test('404: Should return "Invalid phone number" if given a phone number that does not exist', async () => {
         const newFriend = {phoneNumber: '07900000099'}
         const { body: { msg } } = await request(app)
-            .patch('/api/users/6/add')
+            .patch('/api/users/6/friends')
             .send(newFriend)
             .expect(404)
         expect(msg).toBe("Invalid phone number")
     })
 })
+
 describe("PATCH /api/users/:user_id/location", () => {
     test("201 should update the status", async ()=>{
         const update = {status: true}
@@ -111,5 +103,41 @@ describe("PATCH /api/users/:user_id/location", () => {
         expect(location.start).toEqual({lat:1, long:1})
         expect(location.current).toEqual({lat:1, long:1})
         expect(location.end).toEqual({lat:2, long:2})
+    })
+})
+
+describe("GET /api/users/:user_id/friends", () => {
+    test("200 should return an array of friend objects", async ()=>{
+        const { body: { friendList } } = await request(app)
+            .get('/api/users/6/friends')
+            .expect(200)
+        expect(friendList).toEqual([{   
+            user_id: 2,  
+            name: 'Chris W',  
+            phoneNumber: '07900000002',  
+            location: { status: false,     
+                        start: {lat: 0, long: 0},    
+                        current: {lat: 0, long: 0},    
+                        end: {lat: 0, long: 0}  
+                    },  
+        },
+        {   user_id: 3,  
+            name: 'Chris L',  
+            phoneNumber: '07900000003',  
+            location: { status: false,     
+                        start: {lat: 0, long: 0},    
+                        current: {lat: 0, long: 0},    
+                        end: {lat: 0, long: 0}  
+                    },  
+        },
+        {   user_id: 4,  
+            name: 'Aminah',  
+            phoneNumber: '07900000004',  
+            location: { status: false,     
+                        start: {lat: 0, long: 0},    
+                        current: {lat: 0, long: 0},    
+                        end: {lat: 0, long: 0}  
+                    },  
+        }])
     })
 })

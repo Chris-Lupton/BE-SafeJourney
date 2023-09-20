@@ -1,4 +1,4 @@
-const { selectUserById, insertUser, updateUserFriends, getUserByPhoneNumber, updateLocation} = require("../models/users.models");
+const { selectUserById, insertUser, updateUserFriends, getUserByPhoneNumber, updateLocation, fetchFriendList} = require("../models/users.models");
 
 exports.getUserById = async (request, response, next) => {
     try {
@@ -13,8 +13,8 @@ exports.getUserById = async (request, response, next) => {
 exports.postUser = async(request, response, next) => {
     try {
         const newUser = request.body
-        const user = await insertUser(newUser)
-        response.status(201).send({user: user })
+        const acknowledged = await insertUser(newUser)
+        response.status(201).send({ acknowledged })
     } catch (err) {
         next(err)
     }
@@ -40,6 +40,16 @@ exports.patchLocation = async(request, response, next) => {
 
         const acknowledged = await updateLocation(status, start, end, user_id)
         response.status(201).send({ acknowledged })
+    } catch (err) {
+        next(err)
+    }
+}
+
+exports.getFriendList = async (request, response, next) => {
+    try {
+        const { user_id } = request.params
+        const friendList = await fetchFriendList(user_id)
+        response.status(200).send({ friendList })
     } catch (err) {
         next(err)
     }

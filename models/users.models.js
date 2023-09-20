@@ -14,15 +14,19 @@ exports.selectUserById = async (id) => {
 
 exports.insertUser = async (user) =>  {
    
-    if(user.name===undefined||user.phoneNumber===undefined){
+    if(!user.name || !user.phoneNumber){
         return Promise.reject({status:400, msg:"Invalid input"})
     }
+    user.location = {status: false}
+    user.friendList = []
+
     const client = await db.connect()
     const database = client.db()
-    const newUser = await database.collection('users').insertOne(user)
+    const { insertedId } = await database.collection('users').insertOne(user)
 
-    await client.close()
-    return newUser
+    console.log(insertedId);
+    client.close()
+    return
 }
 
 exports.getUserByPhoneNumber = async (phoneNumber) => {
@@ -67,4 +71,24 @@ exports.updateLocation = async (status, start, end, user_id) => {
 
     await client.close()
     return acknowledged
+}
+
+exports.fetchFriendList = async (id) =>{
+    const { friendList } = await this.selectUserById(id)
+
+    const client = await db.connect()
+    const database = client.db()
+
+    const filterQuery = friendList.map(friend => {
+        return { user_id: +friend }
+    })
+    const data = await database.collection('users').find({ $or: filterQuery }).toArray()
+
+    data.forEach(obj => {
+        delete obj._id
+        delete obj.friendList
+    })
+    
+    await client.close()
+    return data
 }
