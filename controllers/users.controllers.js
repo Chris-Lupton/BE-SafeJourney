@@ -60,3 +60,13 @@ exports.getFriendList = async (request, response, next) => {
     }
 }
 
+exports.logInUser = async (request, response, next) => {
+    try {
+        const { phone_number } = request.params
+        const user = await getUserByPhoneNumber(phone_number)
+        response.status(200).send({ user })
+    } catch (err) {
+        next(err)
+    }
+}
+

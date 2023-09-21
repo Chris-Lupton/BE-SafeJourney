@@ -1,4 +1,4 @@
-const { getUserById, postUser, patchUserFriends, patchLocation, getFriendList } = require('../controllers/users.controllers')
+const { getUserById, postUser, patchUserFriends, patchLocation, getFriendList, logInUser } = require('../controllers/users.controllers')
 
 const apiRouter = require('express').Router()
 
@@ -11,5 +11,7 @@ apiRouter.patch('/users/:user_id/friends', patchUserFriends)
 apiRouter.patch('/users/:user_id/location', patchLocation)
 
 apiRouter.get('/users/:user_id/friends', getFriendList)
+
+apiRouter.get('/login/:phone_number', logInUser)
 
 module.exports = apiRouter

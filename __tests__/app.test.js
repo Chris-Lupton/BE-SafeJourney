@@ -126,20 +126,22 @@ describe("GET /api/users/:user_id/friends", () => {
             user_id: 2,  
             name: 'Chris W',  
             phoneNumber: '07900000002',  
-            location: { status: false,     
-                        start: {lat: null, long: null},    
-                        current: {lat: null, long: null},    
-                        end: {lat: null, long: null}  
-                    },  
+            location: {
+                status: true,
+                start: {lat: 53.810, long: -1.56},
+                current: {lat: 53.81168, long: -1.5618},
+                end: {lat: 53.81339, long: -1.5603}
+            },  
         },
         {   user_id: 3,  
             name: 'Chris L',  
             phoneNumber: '07900000003',  
-            location: { status: false,     
-                        start: {lat: null, long: null},    
-                        current: {lat: null, long: null},    
-                        end: {lat: null, long: null}  
-                    },  
+            location: {
+                status: true,
+                start: {lat: 53.8143, long: -1.57604},
+                current: {lat: 53.81487, long: -1.56465},
+                end: {lat: 53.81459, long: -1.5486}
+            },  
         },
         {   user_id: 4,  
             name: 'Aminah',  
@@ -172,5 +174,21 @@ describe('Patch /api/user_id/location', () => {
         expect(location.start).toEqual({lat: null, long: null})
         expect(location.current).toEqual({lat: null, long: null})
         expect(location.end).toEqual({lat: null, long: null})
+    })
+})
+
+describe('GET /api/login/:phone_number', () => {
+    test('200: should return the user data if the number given exists', async() => {
+        const { body: { user } } = await request(app)
+            .get("/api/login/07900000001")
+            .expect(200)
+        expect(user).toHaveProperty('user_id', 1)
+        expect(user).toHaveProperty('name', 'Gemma')
+    })
+    test('404: should return "Invalid phone number" if the given number does not exist', async() => {
+        const { body: { msg } } = await request(app)
+            .get("/api/login/07900000099")
+            .expect(404)
+        expect(msg).toBe("Invalid phone number")
     })
 })
