@@ -75,27 +75,31 @@ exports.updateLocation = async (status, start, end, user_id) => {
     let newLocation 
 
     const filterCriteria = { user_id: +user_id }
-    if(status === true) {
-       newLocation = {
-        status: status,     
-        start: start,    
-        current: start,    
-        end: end  
-        }   
-    
-    } else if (status=== false){
+    if (!status){
          newLocation = {
-            status: status,
+            status: false,
             start: {lat: null, long: null},
             current: {lat: null, long: null},
             end: {lat: null, long: null}
         }
     }
-        const { acknowledged } = await database.collection('users').updateOne(filterCriteria, { $set: {location: newLocation} })
+    if(status) {
+        if(start && end){
+            newLocation = {
+             status: true,     
+             start: start,    
+             current: start,    
+             end: end  
+             }   
+        } else {
+            return Promise.reject({status: 400, msg: 'Bad request'})
+        }
+    }
    
-await client.close()
+    const { acknowledged } = await database.collection('users').updateOne(filterCriteria, { $set: {location: newLocation} })
+   
+    await client.close()
     return acknowledged
-    
 }
 
 exports.fetchFriendList = async (id) =>{
